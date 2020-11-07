@@ -1,7 +1,7 @@
 /*
     В соответствии с https://uk.wikipedia.org/wiki/Реєстраційний_номер_облікової_картки_платника_податків
 */
-const inputINN = 3463463460;//2063463479;
+const inputINN = 3174803737;//3463463460;//2063463479;
 
 function parseINN(inn) {
 
@@ -31,22 +31,39 @@ function parseINN(inn) {
         // собой количество дней от 31 декабря 1899   года до даты рождения человека.
 
         let INNdays = +resultObject.code
-             .slice(0, 5);//к-во дней от 31.12.1899 до даты рождения пользователя
-             let result = new Date (1900, 0, INNdays);
-             let year = result.getUTCFullYear();
-             let month = 1 + result.getUTCMonth();
-             let day = 1 + result.getUTCDate();
-             if (month < 10){
-                 month = "0" + month;
-             }
-             if (day < 10){
-                day = "0" + day;
+            .slice(0, 5);//к-во дней от 31.12.1899 до даты рождения пользователя
+        let result = new Date(1900, 0, INNdays);
+        let year = result.getUTCFullYear();
+        let month = 1 + result.getUTCMonth();
+        let day = 1 + result.getUTCDate();
+
+        let today = new Date();//текущая дата
+        let currentMonth = 1 + today.getUTCMonth();
+        let currentDay = today.getUTCDate();
+
+        let fullYearsNum;//сколько полных лет человеку
+        if (month > currentMonth){
+            fullYearsNum = today.getUTCFullYear() - year - 1;
+        } else if (month === currentMonth){
+            if(day > currentDay){
+                fullYearsNum = today.getUTCFullYear() - year - 1;
+            }else{
+                fullYearsNum = today.getUTCFullYear() - year;
             }
-             let dateOfBirthString = `${year}-${month}-${day}`; // дата рождения
-             resultObject.dateOfBirth = dateOfBirthString;
-             let today = new Date();//текущая дата
-             let fullYearsNum = today.getUTCFullYear() - year;//сколько полных лет человеку
-             resultObject.fullYears = `${fullYearsNum}`;
+        }else{
+            fullYearsNum = today.getUTCFullYear() - year;
+        }
+
+        if (month < 10) { //формируем строку для вывода даты рождения 
+            month = "0" + month;
+        }
+        if (day < 10) {
+            day = "0" + day;
+        }
+        let dateOfBirthString = `${year}-${month}-${day}`; // дата рождения
+
+        resultObject.dateOfBirth = dateOfBirthString;
+        resultObject.fullYears = `${fullYearsNum}`;
     }
 
     return resultObject;
